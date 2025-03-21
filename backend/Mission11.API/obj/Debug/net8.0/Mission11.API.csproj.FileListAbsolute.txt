@@ -68,3 +68,4 @@ C:\Users\adams\Mission11_Adams\backend\Mission11.API\bin\Debug\net8.0\runtimes\w
 C:\Users\adams\Mission11_Adams\backend\Mission11.API\bin\Debug\net8.0\runtimes\win-arm64\native\e_sqlite3.dll
 C:\Users\adams\Mission11_Adams\backend\Mission11.API\bin\Debug\net8.0\runtimes\win-x64\native\e_sqlite3.dll
 C:\Users\adams\Mission11_Adams\backend\Mission11.API\bin\Debug\net8.0\runtimes\win-x86\native\e_sqlite3.dll
+C:\Users\adams\Mission11_Adams\backend\Mission11.API\obj\Debug\net8.0\Mission11.API.sourcelink.json

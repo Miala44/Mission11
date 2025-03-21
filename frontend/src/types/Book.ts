@@ -3,9 +3,9 @@ export interface Book {
   title: string;
   author: string;
   publisher: string;
-  ISBN: string;
-  Classification: string;
-  Category: string;
-  PageCount: number;
-  Price: number;
+  isbn: string;
+  classification: string;
+  category: string;
+  pageCount: number;
+  price: number;
 }
