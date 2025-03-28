@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Book } from './types/Book';
+import { Book } from '../types/Book';
+import { useNavigate } from 'react-router-dom';
 
-function BookList() {
+function BookList({ selectedCategories }: { selectedCategories: string[] }) {
   // State variables to manage books data, pagination, and sorting
   const [books, setBooks] = useState<Book[]>([]);
   const [pageSize, setPageSize] = useState<number>(5);
@@ -9,12 +10,16 @@ function BookList() {
   const [totalItems, setTotalItems] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [sortBy, setSortBy] = useState<string>('');
+  const navigate = useNavigate();
 
   // Fetch data from API whenever pageSize, webPageNum, or sortBy changes
   useEffect(() => {
     const fetchBooks = async () => {
+      const categoryParameters = selectedCategories
+        .map((cat) => `category=${encodeURIComponent(cat)}`)
+        .join('&');
       const response = await fetch(
-        `https://localhost:5000/api/Book?pageNum=${pageSize}&webNum=${webPageNum}&sortBy=${sortBy}`
+        `https://localhost:5000/api/Book?pageNum=${pageSize}&webNum=${webPageNum}&sortBy=${sortBy}${selectedCategories.length ? `&${categoryParameters}` : ''}`
       );
       const data = await response.json();
 
@@ -25,7 +30,7 @@ function BookList() {
     };
 
     fetchBooks();
-  }, [pageSize, webPageNum, sortBy]); // Dependency array ensures re-fetching when these values change
+  }, [pageSize, webPageNum, sortBy, selectedCategories]); // Dependency array ensures re-fetching when these values change
 
   return (
     <>
@@ -38,13 +43,13 @@ function BookList() {
           onChange={(e) => setSortBy(e.target.value)}
         >
           <option value="">Default</option>
-          <option value="name">Project Name (A-Z)</option>
-          <option value="-name">Project Name (Z-A)</option>
+          <option value="name">Book Name (A-Z)</option>
+          <option value="-name">Book Name (Z-A)</option>
           <br />
         </select>
       </label>
 
-      <h1>Books</h1>
+      {/* <h1>Books</h1> */}
       <br />
 
       {/* Display list of books */}
@@ -78,6 +83,18 @@ function BookList() {
                 {b.price}
               </li>
             </ul>
+
+            <button
+              onClick={() =>
+                navigate(`/cart/${b.title}/${b.bookID}/${b.price}`)
+              }
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Click to add this book to your cart!"
+              className="btn btn-danger"
+            >
+              Add to cart
+            </button>
           </div>
         </div>
       ))}
