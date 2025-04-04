@@ -1,7 +1,7 @@
-import { useCallback, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+// import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { CartItem } from '../types/CartItem';
+// import { CartItem } from '../types/CartItem';
 
 function TotalCartPage() {
   const navigate = useNavigate(); // Navigation hook
