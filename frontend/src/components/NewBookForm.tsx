@@ -105,7 +105,9 @@ const NewBookForm = ({ onSuccess, onCancel }: NewBookFormProps) => {
           onChange={handleChange}
         />
       </label>
-      <button type="submit">Add Book</button>
+      <button type="submit" onClick={handleSubmit}>
+        Add Book
+      </button>
       <button type="button" onClick={onCancel}>
         Cancel
       </button>
