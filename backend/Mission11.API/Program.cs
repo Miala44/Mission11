@@ -25,7 +25,13 @@ builder.Services.AddDbContext<BookDbContext>(options =>
 //    });
 //});
 
-builder.Services.AddCors();
+builder.Services.AddCors(options => options.AddPolicy("AllowReactApp",
+    policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    }));
 
 var app = builder.Build();
 
@@ -38,7 +44,7 @@ if (app.Environment.IsDevelopment())
 
 
 //app.UseCors("allowFrontend");
-app.UseCors(options => options.WithOrigins("http://localhost:3000"));
+app.UseCors("AllowReactApp");
 
 app.UseHttpsRedirection();
 

@@ -19,8 +19,8 @@ namespace Mission11.API.Controllers
         }
 
         //method that goes to Books in _context and returns all the books in the database in a list.
-        [HttpGet]
-        public IActionResult GetBooks(int pageNum = 5, int webNum = 1, string? sortBy = null)
+        [HttpGet("AllBooks")]
+        public IActionResult GetBooks(int pageNum = 5, int webNum = 1, string? sortBy = null, [FromQuery] List<string>? category = null)
         {
             //HttpContext.Response.Cookies.Append("BestBookPublisher", "Random House", new CookieOptions
             //{
@@ -33,6 +33,13 @@ namespace Mission11.API.Controllers
 
             var books = _context.Books.AsQueryable();
 
+            //IQueryable bookQuery = _context.Books.AsQueryable();
+
+            if (category != null && category.Any())
+            {
+                books = books.Where(b => category.Contains(b.Category));
+            }
+
             // Apply sorting based on the sortBy parameter
             if (!string.IsNullOrEmpty(sortBy))
             {
@@ -42,12 +49,14 @@ namespace Mission11.API.Controllers
                     books = books.OrderByDescending(b => b.Title); // Sort Z-A
             }
 
+            var totalNumBooks = books.Count();
+
             var bookList = books
                 .Skip((webNum-1)* pageNum)
                 .Take(pageNum)
                 .ToList();
 
-            var totalNumBooks = _context.Books.Count();
+           
 
            
             return Ok(new
@@ -55,6 +64,58 @@ namespace Mission11.API.Controllers
                 Books = bookList,
                 TotalNumBooks = totalNumBooks
             });
+        }
+
+        [HttpGet("GetBookCategory")]
+        public IActionResult GetBookCategory() { 
+            var bookCategory = _context.Books
+                .Select(b => b.Category)
+                .Distinct()
+                .ToList();
+
+            return Ok(bookCategory);
+        }
+
+        [HttpPost("AddBook")]
+        public IActionResult AddBook([FromBody] Book newBook)
+        {
+            _context.Books.Add(newBook);
+            _context.SaveChanges();
+
+            return Ok(newBook);
+        }
+
+        [HttpPut("UpdateBook/{bookId}")]
+        public IActionResult UpdateBook(int bookId, [FromBody] Book updatedBook)
+        {
+            var existingBook = _context.Books.Find(bookId);
+
+            existingBook.Title = updatedBook.Title;
+            existingBook.Author = updatedBook.Author;
+            existingBook.Publisher = updatedBook.Publisher;
+            existingBook.ISBN = updatedBook.ISBN;
+            existingBook.Classification = updatedBook.Classification;
+            existingBook.Category = updatedBook.Category;
+            existingBook.PageCount = updatedBook.PageCount;
+            existingBook.Price = updatedBook.Price;
+
+            _context.Books.Update(existingBook);
+            _context.SaveChanges();
+
+            return Ok(existingBook);
+        }
+
+        [HttpDelete("DeleteBook/{bookId}")]
+        public IActionResult DeleteBook(int bookId)
+        {
+            var existingBook = _context.Books.Find(bookId);
+            if (existingBook == null)
+            {
+                return NotFound();
+            }
+            _context.Books.Remove(existingBook);
+            _context.SaveChanges();
+            return NoContent();
         }
 
 

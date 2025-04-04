@@ -39,7 +39,6 @@ function CategoryFilter({
 
   return (
     <div className="category-filter">
-      <h5>Categories</h5>
       <div className="category-list">
         {categories.map((cat) => (
           <div className="category-item" key={cat}>

@@ -1,37 +1,49 @@
 import { useEffect, useState } from 'react';
 import { Book } from '../types/Book';
 import { useNavigate } from 'react-router-dom';
+import { fetchBooks } from '../api/booksAPI';
+import Pagination from './Pagination';
 
 function BookList({ selectedCategories }: { selectedCategories: string[] }) {
   // State variables to manage books data, pagination, and sorting
   const [books, setBooks] = useState<Book[]>([]);
   const [pageSize, setPageSize] = useState<number>(5);
   const [webPageNum, setWebPageNum] = useState<number>(1);
-  const [totalItems, setTotalItems] = useState<number>(0);
+  // const [totalItems, setTotalItems] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [sortBy, setSortBy] = useState<string>('');
   const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   // Fetch data from API whenever pageSize, webPageNum, or sortBy changes
   useEffect(() => {
-    const fetchBooks = async () => {
-      const categoryParameters = selectedCategories
-        .map((cat) => `category=${encodeURIComponent(cat)}`)
-        .join('&');
-      const response = await fetch(
-        `https://localhost:5000/api/Book?pageNum=${pageSize}&webNum=${webPageNum}&sortBy=${sortBy}${selectedCategories.length ? `&${categoryParameters}` : ''}`
-      );
-      const data = await response.json();
+    const loadBooks = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchBooks(
+          pageSize,
+          webPageNum,
+          sortBy,
+          selectedCategories
+        );
 
-      // Set state with retrieved data
-      setBooks(data.books);
-      setTotalItems(data.totalNumBooks);
-      setTotalPages(Math.ceil(data.totalNumBooks / pageSize));
+        // Set state with retrieved data
+        setBooks(data.books);
+        // setTotalItems(data.totalNumBooks);
+        setTotalPages(Math.ceil(data.totalNumBooks / pageSize));
+      } catch (error) {
+        setError((error as Error).message);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchBooks();
+    loadBooks();
   }, [pageSize, webPageNum, sortBy, selectedCategories]); // Dependency array ensures re-fetching when these values change
 
+  if (loading) return <p>Loading books...</p>;
+  if (error) return <p className="text-red-500">Error: {error}</p>;
   return (
     <>
       {/* Dropdown for sorting books */}
@@ -45,7 +57,7 @@ function BookList({ selectedCategories }: { selectedCategories: string[] }) {
           <option value="">Default</option>
           <option value="name">Book Name (A-Z)</option>
           <option value="-name">Book Name (Z-A)</option>
-          <br />
+          {/* <br /> */}
         </select>
       </label>
 
@@ -100,49 +112,16 @@ function BookList({ selectedCategories }: { selectedCategories: string[] }) {
       ))}
 
       <br />
-
-      {/* Dropdown to select the number of results per page */}
-      <label className="form-label fw-bold">
-        Results per page:
-        <select
-          className="form-select w-auto"
-          value={pageSize}
-          onChange={(p) => setPageSize(Number(p.target.value))}
-        >
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="15">15</option>
-        </select>
-      </label>
-      <br />
-
-      {/* Pagination Controls */}
-      <button
-        className="btn btn-primary"
-        onClick={() => setWebPageNum(webPageNum - 1)}
-        disabled={webPageNum === 1}
-      >
-        Previous
-      </button>
-
-      {/* Page number buttons */}
-      {[...Array(totalPages)].map((_, index) => (
-        <button
-          className="btn btn-outline-primary mx-1"
-          key={index + 1}
-          onClick={() => setWebPageNum(index + 1)}
-        >
-          {index + 1}
-        </button>
-      ))}
-
-      <button
-        className="btn btn-primary"
-        onClick={() => setWebPageNum(webPageNum + 1)}
-        disabled={webPageNum === totalPages}
-      >
-        Next
-      </button>
+      <Pagination
+        currentPage={webPageNum}
+        totalPages={totalPages}
+        pageSize={pageSize}
+        onPageChange={setWebPageNum}
+        onPageSizeChange={(newSize) => {
+          setPageSize(newSize);
+          setWebPageNum(1);
+        }}
+      />
     </>
   );
 }
