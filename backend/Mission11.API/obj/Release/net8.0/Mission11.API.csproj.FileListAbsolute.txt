@@ -69,3 +69,4 @@ C:\Users\adams\Mission11_Adams\backend\Mission11.API\obj\Release\net8.0\refint\M
 C:\Users\adams\Mission11_Adams\backend\Mission11.API\obj\Release\net8.0\Mission11.API.pdb
 C:\Users\adams\Mission11_Adams\backend\Mission11.API\obj\Release\net8.0\Mission11.API.genruntimeconfig.cache
 C:\Users\adams\Mission11_Adams\backend\Mission11.API\obj\Release\net8.0\ref\Mission11.API.dll
+C:\Users\adams\Mission11_Adams\backend\Mission11.API\bin\Release\net8.0\Bookstore.sqlite
