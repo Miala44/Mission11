@@ -20,7 +20,7 @@ export const fetchBooks = async (
       .map((cat) => `category=${encodeURIComponent(cat)}`)
       .join('&');
     const response = await fetch(
-      `${APIurl}/Book?pageNum=${pageSize}&webNum=${webPageNum}&sortBy=${sortBy}${selectedCategories.length ? `&${categoryParameters}` : ''}`
+      `${APIurl}/AllBooks?pageNum=${pageSize}&webNum=${webPageNum}&sortBy=${sortBy}${selectedCategories.length ? `&${categoryParameters}` : ''}`
     );
     if (!response.ok) {
       throw new Error('failed to fetch books');
@@ -59,7 +59,7 @@ export const updateBook = async (
   updatedBook: Book
 ): Promise<Book> => {
   try {
-    const response = await fetch(`${APIurl}/Book/UpdateBook/${bookId}`, {
+    const response = await fetch(`${APIurl}/UpdateBook/${bookId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ export const updateBook = async (
 
 export const deleteBook = async (bookID: number): Promise<void> => {
   try {
-    const response = await fetch(`${APIurl}/Book/DeleteBook/${bookID}`, {
+    const response = await fetch(`${APIurl}/DeleteBook/${bookID}`, {
       method: 'DELETE',
     });
 
