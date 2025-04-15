@@ -12,7 +12,7 @@ interface FetchBooksResponse {
 //   'https://backendadams-dyh8f9arhtezdycc.eastus-01.azurewebsites.net/api/Book';
 
 const APIurl =
-  'https://adams13backend-evakhnaneneveafv.eastus-01.azurewebsites.net/api/Book';
+  'https://backendamelia-e4dyf5brchf3bdhf.eastus-01.azurewebsites.net//api/Book';
 
 export const fetchBooks = async (
   pageSize: number,
